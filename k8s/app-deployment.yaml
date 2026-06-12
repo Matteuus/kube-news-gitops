@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: kube-news-app
+  namespace: kube-news
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: kube-news-app
+
+  template:
+    metadata:
+      labels:
+        app: kube-news-app
+
+    spec:
+      containers:
+      - name: kube-news-app
+        image: kube-news-app:latest
+        imagePullPolicy: IfNotPresent
+
+        ports:
+        - containerPort: 8080
+
+        env:
+        - name: DB_HOST
+          value: "10.244.0.13"
+
+        - name: DB_PORT
+          value: "5432"
+
+        - name: DB_SSL_REQUIRE
+          value: "false"
+
+        envFrom:
+        - secretRef:
+            name: app-secret
